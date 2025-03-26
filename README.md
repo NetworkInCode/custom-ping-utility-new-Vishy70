@@ -1,89 +1,101 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/waUhK5p8)
-# Custom Ping Utility
+# PINGER
 
-## **Objective**
-The goal of this assignment is to develop a custom **ping utility** that replicates the basic functionality of the standard `ping` tool. This tool will allow users to test network reachability and measure round-trip time (RTT) for packets sent to a target IP address.
+NOTE: COMMIT HISTORY is only one, as it was in sync with the [old repository](https://github.com/NetworkInCode/networkincode-classroom-custom-ping-utility-custom_ping_utility). To see the full commit history, please refer tho this GitHub repository: https://github.com/NetworkInCode/custom-ping-utility-Vishy70
 
----
+`pinger` is a custom **ping(8)** clone, to send ICMP ECHO_REQUEST to network hosts on the internet, built in Golang!
 
-## **Problem Statement**
-Your task is to build a **custom ping utility** that performs the following functions:
+## Instructions
 
-- **Send ICMP echo requests** to a target IP address.
-- **Receive and process ICMP echo replies** from the target.
-- **Calculate and display round-trip time (RTT)** for each ICMP echo request-reply cycle.
-- **[Bonus] Provide statistics** on:
-  - Packet loss
-  - Minimum RTT
-  - Maximum RTT
-  - Average RTT
-  - Standard deviation of RTT
-- **[Bonus] Provide options** to configure the utility:
-  - Choose the network interface for sending packets.
-  - Set the Time-To-Live (TTL) value.
-  - Support both **IPv4 and IPv6**.
+Currently, ther is no readily available versioned binary for `pinger`, so you need to compile from source. It currently only supoorts Linux and MacOS.
 
----
+### Prerequisites
 
-## **Repository Setup**
-1. **Clone the repository:**
-   ```sh
-   git clone <repo-link>
-   cd custom-ping-utility
-   ```
-2. **Modify and extend the provided template** according to the requirements.
+You need to have the Go toolchain set up on your machine.
+The [download and install](https://go.dev/doc/install) page on [Go's documentation](https://go.dev/doc) is a good place to start. 
+A summary of it follows.
 
----
+#### Linux
 
-## **Implementation Guidelines**
-- Implement socket programming to handle **ICMP (Internet Control Message Protocol) packets**.
-- Ensure compatibility with both **Linux and macOS systems**.
-- Use appropriate **error handling** to deal with network timeouts, unreachable hosts, and permission issues.
-- Structure your code to allow easy extension for bonus features.
+- On the [website](https://go.dev/doc/install), click the download button and choose the Linux .tar.gz archive file.
 
----
+- Open a shell/terminal and navigate to locations where the archive downloaded (by default, it would be in Dowloads so run `cd ~/Downloads`).
 
-## **Documentation Requirements**
-Your submission must include:
-- A **README.md** file with:
-  - Clear **setup and installation instructions**.
-  - **Usage examples** with command-line arguments.
-  - **Required dependencies** and supported versions.
-- **Well-documented code** with meaningful comments.
-- A **script (`scripts/test.sh`)** to test the functionality of your custom ping utility.
+- Run the following (you may need to run as root, or use sudo):
 
----
+    `rm -rf /usr/local/go && tar -C /usr/local -xzf go<version-number-here>.linux-amd64.tar.gz`
 
-## **Example Repository Structure**
-```
-/ (Root)
-│── README.md          # Detailed assignment instructions
-│── Makefile           # Build and run commands (if applicable)
-│── src/
-│   │── main.py        # Main Python script for the ping utility
-│   │── icmp_handler.py # ICMP packet handling logic
-│── scripts/
-│   │── test.sh        # Script to test the program
-```
+- Add the `user/local/go/bin` directory to your `$PATH` shell environment variable. 
+To do this globally, you need to modfiy your `$HOME/.profile`. You can do this by opening the file (`nano $HOME/.profile`), and adding the following line on a new line at the end of the file: `export PATH=$PATH:/usr/local/go/bin`. Save and exit the file.
 
----
+- Verify that Go is now installed correctly by running `go version`. It should show something like:
 
-## **Resources**
-- [What are Ping and Traceroute Really?](https://blog.apnic.net/2021/06/21/what-are-ping-and-traceroute-really/)
-- [Socket Programming Guide](https://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html)
-- [Understanding ICMP and Ping](https://avocado89.medium.com/ping-icmp-32e9eba81623)
-- **Socket Programming in Python** (for implementation reference)
+    `go version go1.24.1 linux/amd64`
 
----
+- NOTE: You may need to open a new terminal window, for the changes in the `$HOME/.profile` to take place.
 
-## **Submission Instructions**
-1. Complete your implementation and ensure it meets the assignment requirements.
-2. Update the `README.md` with detailed instructions on how to build and run your solution.
-3. **Make a pull request (PR)** to submit your final code.
-4. Your PR should include:
-   - A description of your implementation.
-   - Any limitations or known issues.
-   - Example test cases demonstrating the tool's functionality.
+- You can now build the `pinger` package!
 
-**Happy coding! 🚀**
+#### MacOS
 
+- On the [website](https://go.dev/doc/install), click the download button and choose the Apple macOS (either ARM64 x86_64 depending on CPU architecture) .pkg file. To check this, you can open a terminal and type the `uname -p` command to determine it.
+
+- Double click and open the package you installed, and follow the wizard instructions. The installer should install the package in `/usr/local/go`, and put `/usr/local/go/bin` in your PATH environment variable.
+
+- You can now build the `pinger` package!
+
+### Dependencies
+
+The exact dependencies for the project can be found in the go.mod file in the `pinger` directory. The dependencies will get installed when running `go build`, as below.
+
+### Build and Install Pinger
+
+To get build and install the binary, do the following :-
+
+- Clone the repository in a directory, and enter the project directory:
+
+    `git clone https://github.com/NetworkInCode/custom-ping-utility-Vishy70 && cd custom-ping-utility-Vishy70`
+
+- Change into the `pinger` directory: 
+
+    `cd pinger`
+
+- Build the application (you can change the destination by modifying the path given to *flag -o*): 
+
+    `go build -o ../bin/pinger`
+
+- You can now run the application (NOTE: You will likely need root access, or need to run the application suing sudo):
+
+    `../bin/pinger --help`
+
+- You can also install it as a binary that can be run as `pinger -h` by running `go install` inside of pinger directory, although not suggested.
+    Note: You may likely get permission error, it is likely that your $GOBIN is pointing to /bin, which is not writable by non-root. You will need to setup your $GOBIN and $PATH root environment variables to `/bin` and `$PATH:/usr/local/go/bin`. Then, as root, you can directly use `pinger` command itself. Thus, it is advised to use `go build` instead, as you can easily run that with sudo. 
+
+## Usage
+
+`pinger` sends ICMP Echo Requests. There is only one required argument: a destination address. This can be an IPv4 address, IPv6 address, or even a internet host-name (it will automatically get resolved via DNS), as long as the address is not malformed.
+    `./pinger nitk.ac.in`
+
+In addition, there are some `flags` that can modify `pinger`'s functionality:-
+- Use [-4|-6] to specifically use an IPv4/IPv6 address. These are mutually exclusive flags.
+- Use [-I] <iface-name> to specify the network device you want to send and receive ICMP Echo Requests and Replies from.
+- Use [-c] <number-of-times> to specify the number of Echo Requests you want to send
+- Use [-t ] <ttl> to set the packet Time To Live 
+
+An example: `./pinger -I wlp45s0 -c 4 -6 nitk.ac.in`
+
+## Scripts
+
+There is a script to run an example usage of pinger in [`scripts/test.sh`](./scripts/test.sh). This script was made with Linux in mind, some minor modifcations may be required for MacOS. 
+
+IMPORTANT: the script expects an absolute path to the packages `pinger directory`. Please keep this in mind!
+
+## Features
+- Mostly compatible with both **Linux and macOS systems**.
+- **Error handling** to deal with network timeouts, unreachable hosts, etc.
+- IPv4/IPv6 support included
+- Custom flags for **network interface**, **number of echo requests**, **ttl**.
+
+## Issues
+- Unable to handle IPv6's neighbor advertisement & solicitation, and router advertisement & solicitation. Does not count these errors...
+- Exact ttl value in packet won't be set **(similar to ping(8))**, but will still account for TTL Exceeded, and Hop Limit Reached successfully.
+- Since requires root privileges, the user currently needs to do some extra configuration of GO Environment variables (for root user) to run the binary simply as `pinger`.
